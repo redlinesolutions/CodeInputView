@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-public class LabelBasedInputField: UILabel, InputableField {
+open class LabelBasedInputField: UILabel, InputableField {
     public struct Configuration {
         public typealias AppearanceBlock = (UILabel) -> ()
         
@@ -24,7 +24,7 @@ public class LabelBasedInputField: UILabel, InputableField {
     
     public static var configuration: LabelBasedInputField.Configuration? = LabelBasedInputField.Configuration()
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         
         LabelBasedInputField.configuration?.initialAppearanceBlock?(self)
@@ -34,31 +34,32 @@ public class LabelBasedInputField: UILabel, InputableField {
         super.init(coder: aDecoder)
     }
     
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         
         LabelBasedInputField.configuration?.onLayoutAppearanceBlock?(self)
     }
     
-    public func deleteValue() {
+    open func deleteValue() {
         LabelBasedInputField.configuration?.initialAppearanceBlock?(self)
         LabelBasedInputField.configuration?.emptyAppearanceBlock?(self)
         value = ""
         text = nil
     }
     
-    public func setValue(_ newValue: String) {
+    open func setValue(_ newValue: String) {
         LabelBasedInputField.configuration?.initialAppearanceBlock?(self)
         LabelBasedInputField.configuration?.filledAppearanceBlock?(self)
         value = newValue
         text = newValue
     }
     
-    public func getValue() -> String {
+    open func getValue() -> String {
         return value ?? ""
     }
     
-    public func isEmpty() -> Bool {
+    open func isEmpty() -> Bool {
         return value == nil
     }
+    
 }

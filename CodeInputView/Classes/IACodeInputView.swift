@@ -10,8 +10,8 @@ import Foundation
 import UIKit
 
 open class IACodeInputView<T: InputableField>: UIView, UIKeyInput {
-    private var fields = [T]()
-    private var currentIndex = 0
+    public var fields = [T]()
+    public var currentIndex = 0
     public var numberOfFields = 4 {
         didSet {
             configure()
@@ -19,7 +19,7 @@ open class IACodeInputView<T: InputableField>: UIView, UIKeyInput {
         }
     }
     
-    public var code = ""
+    open var code = ""
     public var horizontalMargins: CGFloat = 8.0 {
         didSet {
             layoutSubviews()
@@ -48,7 +48,7 @@ open class IACodeInputView<T: InputableField>: UIView, UIKeyInput {
         return true
     }
     
-    public var hasText: Bool {
+    open var hasText: Bool {
         return fields.filter({ !$0.isEmpty() }).count > 0
     }
     
@@ -58,7 +58,7 @@ open class IACodeInputView<T: InputableField>: UIView, UIKeyInput {
         configure()
     }
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         
         configure()
@@ -79,9 +79,10 @@ open class IACodeInputView<T: InputableField>: UIView, UIKeyInput {
     private func configure() {
         guard fields.count != numberOfFields else { return }
         
+        let fieldCount = fields.count
         if numberOfFields > fields.count {
-            (0..<(numberOfFields - fields.count)).forEach({ _ in
-                insertNewField()
+            (0..<(numberOfFields - fields.count)).forEach({ pos in
+                insertNewField(pos + fieldCount)
             })
         } else {
             fields[numberOfFields..<fields.count].forEach({ $0.removeFromSuperview() })
@@ -89,7 +90,7 @@ open class IACodeInputView<T: InputableField>: UIView, UIKeyInput {
         }
     }
     
-    private func insertNewField() {
+    open func insertNewField(_ index: Int) {
         let field = T(frame: fields.last?.frame ?? .zero)
         addSubview(field)
         fields.append(field)
@@ -109,13 +110,13 @@ open class IACodeInputView<T: InputableField>: UIView, UIKeyInput {
         })
     }
     
-    public func clear() {
+    open func clear() {
         fields.forEach({ $0.deleteValue() })
         updateCode()
         currentIndex = 0
     }
     
-    public func insertText(_ text: String) {
+    open func insertText(_ text: String) {
         guard currentIndex < fields.count else {
             return
         }
@@ -125,7 +126,7 @@ open class IACodeInputView<T: InputableField>: UIView, UIKeyInput {
         updateCode()
     }
     
-    public func deleteBackward() {
+    open func deleteBackward() {
         guard currentIndex > 0 else {
             return
         }
@@ -135,7 +136,7 @@ open class IACodeInputView<T: InputableField>: UIView, UIKeyInput {
         updateCode()
     }
     
-    private func updateCode() {
+    open func updateCode() {
         code = fields.reduce("", { $0 + $1.getValue() })
         if code.count == numberOfFields {
             onCodeDidEnter?(code)
